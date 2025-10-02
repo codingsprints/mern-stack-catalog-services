@@ -4,17 +4,24 @@ import { v4 as uuidv4 } from 'uuid';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { ProductService } from './product-service';
-import { Filter, Product } from './product-types';
+import { Filter, Product, ProductEvents } from './product-types';
 import { UploadedFile } from 'express-fileupload';
 import { FileStorage } from '../common/types/storage';
 import { AuthRequest } from '../common/types/types';
-import { PRODUCT_IMAGE, Roles } from '../common/constants/constants';
+import {
+  PRODUCT_IMAGE,
+  PRODUCT_TOPIC_NAME,
+  Roles,
+} from '../common/constants/constants';
 import mongoose from 'mongoose';
+import { MessageProducerBroker } from '../common/types/broker';
+import { mapToObject } from '../utils';
 
 export class ProductController {
   constructor(
     private readonly productService: ProductService,
     private readonly storage: FileStorage,
+    private readonly Broker: MessageProducerBroker,
   ) {}
 
   create = async (req: Request, res: Response, next: NextFunction) => {
@@ -66,6 +73,21 @@ export class ProductController {
 
     const newProduct = await this.productService.createProduct(
       product as unknown as Product,
+    );
+
+    //send product to Kafka
+    await this.Broker.sendMessage(
+      PRODUCT_TOPIC_NAME,
+      JSON.stringify({
+        event_type: ProductEvents.PRODUCT_CREATE,
+        data: {
+          id: newProduct._id,
+          // todo: fix the typescript error
+          priceConfiguration: mapToObject(
+            newProduct.priceConfiguration as unknown as Map<string, any>,
+          ),
+        },
+      }),
     );
 
     res.status(200).json({
@@ -145,6 +167,20 @@ export class ProductController {
     const updatedProduct = await this.productService.updateProduct(
       productId,
       productToUpdate,
+    );
+
+    // Send product to kafka.
+    await this.Broker.sendMessage(
+      'product',
+      JSON.stringify({
+        event_type: ProductEvents.PRODUCT_UPDATE,
+        data: {
+          id: updatedProduct._id,
+          priceConfiguration: mapToObject(
+            updatedProduct.priceConfiguration as unknown as Map<string, any>,
+          ),
+        },
+      }),
     );
 
     res.status(200).json({
