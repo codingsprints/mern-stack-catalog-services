@@ -26,7 +26,7 @@ interface Config {
 
 export const configENV: Config = {
   port: config.get('server.port') || 5002,
-  nodeEnv: process.env.NODE_ENV || 'development',
+  nodeEnv: process.env.NODE_ENV || 'production',
   baseUrl: config.get('server.baseUrl') ?? '/pizza-app/catalog-service/api/v1',
   hostname: config.get('server.hostname') ?? 'localhost',
   database_Url: config.get('database.url'),
