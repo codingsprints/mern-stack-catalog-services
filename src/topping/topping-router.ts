@@ -11,14 +11,16 @@ import authenticate from '../common/middlewares/authenticate';
 import { canAccess } from '../common/middlewares/canAccess';
 import { Roles } from '../common/constants/constants';
 import { validate } from '../common/utils/ValidationChain';
+import { createMessageProducerBroker } from '../common/factories/brokerFactory';
 
 const router = express.Router();
 
 const toppingService = new ToppingService();
-
+const broker = createMessageProducerBroker();
 const toppingController = new ToppingController(
   new S3Storage(),
   toppingService,
+  broker,
 );
 
 router.post(

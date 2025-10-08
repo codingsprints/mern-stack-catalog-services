@@ -3,16 +3,22 @@ import { UploadedFile } from 'express-fileupload';
 import { v4 as uuidv4 } from 'uuid';
 import { FileStorage } from '../common/types/storage';
 import { ToppingService } from './topping-service';
-import { CreataeRequestBody, Topping } from './topping-types';
+import { CreataeRequestBody, Topping, ToppingEvents } from './topping-types';
 import { validationResult } from 'express-validator';
 import createHttpError from 'http-errors';
 import { AuthRequest } from '../common/types/types';
-import { Roles, TOPPING_IMAGE } from '../common/constants/constants';
+import {
+  Roles,
+  TOPIC_NAME,
+  TOPPING_IMAGE,
+} from '../common/constants/constants';
+import { MessageProducerBroker } from '../common/types/broker';
 
 export class ToppingController {
   constructor(
     private readonly storage: FileStorage,
     private readonly toppingService: ToppingService,
+    private readonly Broker: MessageProducerBroker,
   ) {}
 
   create = async (
@@ -56,6 +62,17 @@ export class ToppingController {
 
     // Send topping to kafka.
     // todo: move topic name to the config
+    await this.Broker.sendMessage(
+      TOPIC_NAME.topping,
+      JSON.stringify({
+        event_type: ToppingEvents.TOPPING_CREATE,
+        data: {
+          id: savedTopping._id,
+          price: savedTopping.price,
+          tenantId: savedTopping.tenantId,
+        },
+      }),
+    );
 
     res.json({
       code: 200,
@@ -155,6 +172,19 @@ export class ToppingController {
     const updatedTopping = await this.toppingService.update(
       toppingId,
       updateToTopping,
+    );
+
+    // Send topping to kafka
+    await this.Broker.sendMessage(
+      TOPIC_NAME.topping,
+      JSON.stringify({
+        event_type: ToppingEvents.TOPPING_CREATE,
+        data: {
+          price: updateToTopping.price,
+          tenantId: updateToTopping.tenantId,
+          id: toppingId,
+        },
+      }),
     );
 
     res.json({

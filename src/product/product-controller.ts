@@ -10,8 +10,8 @@ import { FileStorage } from '../common/types/storage';
 import { AuthRequest } from '../common/types/types';
 import {
   PRODUCT_IMAGE,
-  PRODUCT_TOPIC_NAME,
   Roles,
+  TOPIC_NAME,
 } from '../common/constants/constants';
 import mongoose from 'mongoose';
 import { MessageProducerBroker } from '../common/types/broker';
@@ -77,7 +77,7 @@ export class ProductController {
 
     //send product to Kafka
     await this.Broker.sendMessage(
-      PRODUCT_TOPIC_NAME,
+      TOPIC_NAME.product,
       JSON.stringify({
         event_type: ProductEvents.PRODUCT_CREATE,
         data: {
@@ -217,8 +217,6 @@ export class ProductController {
       },
     );
 
-    console.log('products ----->', products);
-
     const finalProducts = (products.data as Product[]).map(
       (product: Product) => {
         return {
@@ -251,14 +249,12 @@ export class ProductController {
     if (!product) {
       return next(createHttpError(404, 'Product not found'));
     }
-    console.log('products ----->', product);
+
     const imageUri = this.storage.getObjectUri(PRODUCT_IMAGE, product.image);
     const newProduct = {
       ...product,
       image: imageUri,
     };
-
-    console.log('newProducts ----->', newProduct);
 
     res.status(200).json({
       code: 200,
