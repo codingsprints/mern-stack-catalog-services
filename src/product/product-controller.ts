@@ -19,9 +19,9 @@ import { mapToObject } from '../utils';
 
 export class ProductController {
   constructor(
-    private readonly productService: ProductService,
-    private readonly storage: FileStorage,
-    private readonly Broker: MessageProducerBroker,
+    private productService: ProductService,
+    private storage: FileStorage,
+    private Broker: MessageProducerBroker,
   ) {}
 
   create = async (req: Request, res: Response, next: NextFunction) => {
@@ -29,8 +29,6 @@ export class ProductController {
     if (!result.isEmpty()) {
       return next(createHttpError(400, result.array()[0]?.msg as string));
     }
-
-    console.log('image ------->', req.files!.image);
 
     const image = req.files!.image as UploadedFile;
     const imageName = uuidv4();
@@ -120,8 +118,6 @@ export class ProductController {
 
     if ((req as AuthRequest).auth.role !== Roles.ADMIN) {
       const tenant = (req as AuthRequest).auth.tenant;
-      console.log('tenant ----->', tenant);
-      console.log('product.tenantId ----->', product.tenantId);
       if (product.tenantId !== tenant) {
         return next(
           createHttpError(403, 'You are not allowed to access this product'),

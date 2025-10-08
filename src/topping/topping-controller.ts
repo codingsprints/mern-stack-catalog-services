@@ -42,7 +42,7 @@ export class ToppingController {
 
     const { name, price, tenantId } = req.body;
 
-    const topping = { name, price, tenantId } as Topping;
+    // const topping = { name, price, tenantId } as Topping;
 
     // if ((req as AuthRequest).auth.role !== Roles.ADMIN) {
     //   const tenant = (req as AuthRequest).auth.tenant;
@@ -83,7 +83,7 @@ export class ToppingController {
     });
   };
 
-  get = async (req: Request, res: Response, next: NextFunction) => {
+  get = async (req: Request, res: Response) => {
     const toppings = await this.toppingService.getAll(
       req.query.tenantId as string,
     );
@@ -125,8 +125,6 @@ export class ToppingController {
     if (!topping) {
       return next(createHttpError(404, 'Topping not found'));
     }
-
-    console.log('topping ----->', topping);
 
     // if ((req as AuthRequest).auth.role !== Roles.ADMIN) {
     //   const tenant = (req as AuthRequest).auth.tenant;
