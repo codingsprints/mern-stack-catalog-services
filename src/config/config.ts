@@ -21,15 +21,25 @@ interface Config {
   hostname: string;
   database_Url: string;
   jwksUri: string;
-  broker: string;
+  broker: string[];
+  clientUI: string;
+  adminUI: string;
+  kafkaSSL: boolean;
+  kafkaUserName: string;
+  kafkaPassword: string;
 }
 
 export const configENV: Config = {
   port: config.get('server.port') || 5002,
-  nodeEnv: process.env.NODE_ENV || 'production',
+  nodeEnv: process.env.NODE_ENV || NODE_ENV_VAL.PRODUCTION,
   baseUrl: config.get('server.baseUrl') ?? '/pizza-app/catalog-service/api/v1',
   hostname: config.get('server.hostname') ?? 'localhost',
-  database_Url: config.get('database.url'),
-  jwksUri: config.get('auth.jwksUri'),
-  broker: config.get('kafka.broker'),
+  database_Url: config.get('database.url') || '',
+  jwksUri: config.get('auth.jwksUri') || '',
+  broker: config.get('kafka.broker') || [],
+  clientUI: config.get('frontend.clientUI') || '',
+  adminUI: config.get('frontend.adminUI') || '',
+  kafkaSSL: config.get('kafka.ssl') || false,
+  kafkaUserName: config.get('kafka.sasl.username') || '',
+  kafkaPassword: config.get('kafka.sasl.password') || '',
 };

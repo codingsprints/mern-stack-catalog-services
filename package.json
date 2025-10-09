@@ -63,7 +63,9 @@
     "uuid": "^11.1.0",
     "v8-compile-cache-lib": "^3.0.1",
     "winston": "^3.17.0",
-    "yn": "^3.1.1"
+    "yn": "^3.1.1",
+    "dotenv": "^17.2.1",
+    "express-validator": "^7.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
@@ -78,12 +80,10 @@
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
-    "dotenv": "^17.2.1",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.0.1",
     "eslint-plugin-prettier": "^5.5.4",
-    "express-validator": "^7.2.1",
     "globals": "^16.3.0",
     "husky": "^8.0.0",
     "jest": "^30.0.5",

@@ -1,6 +1,7 @@
-import config from 'config';
 import { Kafka, KafkaConfig, Producer } from 'kafkajs';
 import { MessageProducerBroker } from '../common/types/broker';
+import { configENV } from './config';
+import { NODE_ENV_VAL } from '../common/constants/constants';
 
 export class KafkaProducerBroker implements MessageProducerBroker {
   private producer: Producer;
@@ -11,18 +12,18 @@ export class KafkaProducerBroker implements MessageProducerBroker {
       brokers,
     };
 
-    // if (process.env.NODE_ENV === 'production') {
-    //   kafkaConfig = {
-    //     ...kafkaConfig,
-    //     ssl: config.get('kafka.ssl'),
-    //     connectionTimeout: 45000,
-    //     sasl: {
-    //       mechanism: 'plain',
-    //       username: config.get('kafka.sasl.username'),
-    //       password: config.get('kafka.sasl.password'),
-    //     },
-    //   };
-    // }
+    if (configENV.nodeEnv === NODE_ENV_VAL.PRODUCTION) {
+      kafkaConfig = {
+        ...kafkaConfig,
+        ssl: configENV.kafkaSSL,
+        connectionTimeout: 45000,
+        sasl: {
+          mechanism: 'plain',
+          username: configENV.kafkaUserName,
+          password: configENV.kafkaPassword,
+        },
+      };
+    }
 
     const kafka = new Kafka(kafkaConfig);
     this.producer = kafka.producer();

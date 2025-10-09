@@ -14,6 +14,8 @@ export const PRODUCT_IMAGE = 'product-images';
 export const TOPPING_IMAGE = 'topping-images';
 export const CATEGORY_IMAGE = 'category-images';
 
+export const CATALOG_SERVICE = 'catalog-service';
+
 export const TOPIC_NAME = {
   product: 'product',
   topping: 'topping',

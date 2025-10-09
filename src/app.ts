@@ -12,9 +12,11 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+const ALLOWED_DOMAINS = [configENV.adminUI, configENV.clientUI];
+
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000'],
+    origin: ALLOWED_DOMAINS as string[],
     credentials: true,
   }),
 );
