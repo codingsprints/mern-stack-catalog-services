@@ -22,7 +22,7 @@ app.use(
 );
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello from catalog service');
+  res.send('Hello from catalog service ');
 });
 
 app.use(`/categories`, categoryRouter);
