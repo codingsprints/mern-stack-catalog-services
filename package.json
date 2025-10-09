@@ -18,7 +18,7 @@
   "scripts": {
     "test:watch": "jest --passWithNoTests --watch --coverage --all --runInBand",
     "test": "jest --no-cache --coverage --all --runInBand",
-    "build": "tsc",
+    "build": "npm run lint && tsc",
     "start": "ts-node dist/server.js",
     "dev": "nodemon --legacy-watch src/server.ts",
     "format:check": "prettier . --check",
